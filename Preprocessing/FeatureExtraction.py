@@ -8,11 +8,11 @@ from PIL import Image
 from tqdm import tqdm
 import cv2
 
-DATASET_PATH = 'data/dataset'
+DATASET_PATH = '../data/dataset'
 CLASSES = ["cardboard", "glass", "metal", "paper", "plastic", "trash"]
 
-CNN_FEATURES_FILE = "data/cnn_features.npy"
-CNN_LABELS_FILE = "data/cnn_labels.npy"
+CNN_FEATURES_FILE = "../data/cnn_features.npy"
+CNN_LABELS_FILE = "../data/cnn_labels.npy"
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f"Using device: {DEVICE}")
@@ -157,13 +157,3 @@ def load_or_build_cnn_dataset(model_name='resnet18'):  #load existing CNN featur
     else:
         print("CNN features not found - building new dataset...")
         return build_cnn_dataset(model_name=model_name)
-
-
-# ============================================================================
-# MAIN EXECUTION
-# ============================================================================
-
-if __name__ == "__main__":
-
-    print("\nStarting feature extraction...")
-    X, y = load_or_build_cnn_dataset(model_name='resnet18')

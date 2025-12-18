@@ -9,15 +9,15 @@ import joblib
 import os
 
 # Load feature vectors and labels
-X = np.load("data/cnn_features.npy")
-y = np.load("data/cnn_labels.npy")
+X = np.load("../data/cnn_features.npy")
+y = np.load("../data/cnn_labels.npy")
 
 # Encode labels
 le = LabelEncoder()
 y_encoded = le.fit_transform(y)
 
 # Save label encoder
-joblib.dump(le, "models/label_encoder.pkl")
+joblib.dump(le, "../models/label_encoder.pkl")
 
 # Train/Test split
 X_train, X_val, y_train, y_val = train_test_split(
@@ -43,7 +43,7 @@ acc = accuracy_score(y_val, y_pred)
 print("Accuracy:", acc)
 
 # Save model
-joblib.dump(svm, "models/svm_model.pkl")
+joblib.dump(svm, "../models/svm_model.pkl")
 print("SVM saved.")
 
 
