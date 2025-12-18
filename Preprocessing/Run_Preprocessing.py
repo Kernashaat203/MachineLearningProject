@@ -1,8 +1,8 @@
-from Preprocessing.DataAugmentation import CLASSES, DATASET_PATH, TRGT_IMGES_PER_CLASS, Augment_Img
+from DataAugmentation import CLASSES, DATASET_PATH, TRGT_IMGES_PER_CLASS, Augment_Img
 import os
 import random
 import cv2
-from Preprocessing.FeatureExtraction import load_or_build_cnn_dataset
+from FeatureExtraction import load_or_build_cnn_dataset
 
 
 print("\nStart Aug:\n")
