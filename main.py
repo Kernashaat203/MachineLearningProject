@@ -65,7 +65,7 @@ def predict(features):
 
 #Camera loop
 cap = cv2.VideoCapture(0)
-print("Camera started. Press Q to exit!")
+print("Camera started. Press q to exit!")
 
 while True:
     ret, frame = cap.read()
@@ -77,11 +77,11 @@ while True:
     label, confidence = predict(features)
 
     fps = 1.0 / (time.time() - start_time)
-    text = f"{label} | {confidence:.2f} | FPS: {fps:.1f}"
+    text = f"{label.upper()} | {confidence:.2f} | FPS: {fps:.1f}"
     color = (0, 255, 0) if label != UNKNOWN_LABEL else (0, 0, 255)
     cv2.putText(frame, text, (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)
     cv2.imshow("Live Material Identification", frame)
-    if cv2.waitKey(1) & 0xff == ord('q'):
+    if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
 cap.release()
