@@ -8,7 +8,7 @@ def predict(dataFilePath, bestModelPath):
     # load model
     model = joblib.load(bestModelPath)
     model_dir = os.path.dirname(bestModelPath)
-    label_encoder_path = os.path.join(model_dir, "label_encoder.pkl")
+    label_encoder_path = os.path.join(model_dir, "svm_label_encoder.pkl")
     #Label encoder
     if not os.path.exists(label_encoder_path):
         label_encoder_path = os.path.join(model_dir, "knn_label_encoder.pkl")
@@ -53,3 +53,12 @@ def predict(dataFilePath, bestModelPath):
         except Exception as e:
             print(e)
     return predictions
+
+
+
+if __name__ == "__main__":
+    label = predict("test_img", "models/KNN/knn_model.pkl")
+    print(label)
+
+    label = predict("test_img", "models/SVM/svm_model.pkl")
+    print(label)
