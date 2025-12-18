@@ -6,12 +6,12 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 
-FEATURES_FILE = "../data/cnn_features.npy"
-LABELS_FILE = "../data/cnn_labels.npy"
-MODEL_SAVE_PATH = "../models/KNN/knn_model.pkl"
-SCALER_SAVE_PATH = "../models/KNN/knn_scaler.pkl"
-LABEL_ENCODER_PATH = "../models/KNN/knn_label_encoder.pkl"
-THRESHOLD_PATH = "../models/KNN/knn_threshold.pkl"
+FEATURES_FILE = "data/cnn_features.npy"
+LABELS_FILE = "data/cnn_labels.npy"
+MODEL_SAVE_PATH = "models/KNN/knn_model.pkl"
+SCALER_SAVE_PATH = "models/KNN/knn_scaler.pkl"
+LABEL_ENCODER_PATH = "models/KNN/knn_label_encoder.pkl"
+THRESHOLD_PATH = "models/KNN/knn_threshold.pkl"
 
 CONFIDENCE_THRESHOLD = 0.55
 
