@@ -12,6 +12,9 @@ CONF_THRESHOLD_KNN = 0.65
 
 SVM_MODEL_PATH = "models/svm_model.pkl"
 SVM_LABEL_ENCODER_PATH = "models/label_encoder.pkl"
+SVM_SCALER_PATH = "models/svm_scaler.pkl"
+SVM_PCA_PATH = "models/svm_pca.pkl"
+
 
 KNN_MODEL_PATH = "models/knn_model.pkl"
 KNN_SCALER_PATH = "models/knn_scaler.pkl"
@@ -28,6 +31,9 @@ print("Loading models....")
 
 svm_model = joblib.load(SVM_MODEL_PATH)
 svm_label_encoder = joblib.load(SVM_LABEL_ENCODER_PATH)
+svm_scaler = joblib.load(SVM_SCALER_PATH)
+svm_pca = joblib.load(SVM_PCA_PATH)
+
 
 knn_model = pickle.load(open(KNN_MODEL_PATH, "rb"))
 knn_scaler = pickle.load(open(KNN_SCALER_PATH, "rb"))
@@ -43,7 +49,11 @@ extractor = CNNFeatureExtractor()
 
 def predict(features):
     if MODEL_TYPE == "svm":
-        probs = svm_model.predict_proba(features.reshape(1, -1))[0]
+        X = features.reshape(1, -1)
+        X = svm_scaler.transform(X)
+        X = svm_pca.transform(X)
+
+        probs = svm_model.predict_proba(X)[0]
         indx = np.argmax(probs)
         confidance = probs[indx]
 

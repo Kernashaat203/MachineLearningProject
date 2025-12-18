@@ -1,81 +1,65 @@
-import numpy as np
-from sklearn.svm import SVC
-from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.model_selection import train_test_split
+from sklearn.decomposition import PCA
+from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
+import numpy as np
 import joblib
 
 
-import os
+FEATURE_FILE = "../data/cnn_features.npy"
+LABELS_FILE = "../data/cnn_labels.npy"
 
-# Load feature vectors and labels
-X = np.load("../data/cnn_features.npy")
-y = np.load("../data/cnn_labels.npy")
+# Load CNN features after data preprocessing
+x = np.load(FEATURE_FILE)
+y = np.load(LABELS_FILE)
 
-# Encode labels
+# encoding
 le = LabelEncoder()
 y_encoded = le.fit_transform(y)
 
-# Save label encoder
-joblib.dump(le, "../models/label_encoder.pkl")
 
-# Train/Test split
-X_train, X_val, y_train, y_val = train_test_split(
-    X, y_encoded, test_size=0.2, random_state=42
+
+# data splitting
+x_train, x_val, y_train, y_val = train_test_split(
+    x, y_encoded, test_size=0.2, random_state=42, stratify=y_encoded
 )
 
-# SVM model
+# sclaing
+scaler = StandardScaler()
+# learn and sacale
+x_scaled = scaler.fit_transform(x_train)
+x_value_after_scale = scaler.transform(x_val)
+
+# apply pca
+pca = PCA(n_components=128)
+# learn and scale
+x_pca = pca.fit_transform(x_scaled)
+x_val_after_pca = pca.transform(x_value_after_scale)
+
+# apply svm
 svm = SVC(
-    kernel='rbf',
-    C=10,
-    gamma=0.01,
-    probability=True
-)
+        kernel="rbf",
+        C=10,
+        gamma="scale",
+        probability=True)
 
-
-# Train
-print("Training SVM...")
-svm.fit(X_train, y_train)
-
-# Validate
-y_pred = svm.predict(X_val)
-acc = accuracy_score(y_val, y_pred)
-print("Accuracy:", acc)
-
-# Save model
-joblib.dump(svm, "../models/svm_model.pkl")
-print("SVM saved.")
-
-
-def predict_with_unknown(model,label_encoder, feature_vector, threshold=0.60):
-    feature_vector = np.array(feature_vector).reshape(1, -1)
-    probs = model.predict_proba(feature_vector)[0]
-
-    max_prob = np.max(probs)
-    best_idx = np.argmax(probs)
-    predicted_class = label_encoder.inverse_transform([best_idx])[0]
-
-    if max_prob < threshold:
-        return "unknown", max_prob
-
-    return predicted_class, max_prob
-
-# Class ID mapping
-CLASS_TO_ID = {
-    "glass": 0,
-    "paper": 1,
-    "cardboard": 2,
-    "plastic": 3,
-    "metal": 4,
-    "trash": 5,
-    "unknown": 6
-}
+# training data
+print("training svm, this may take some time")
+svm.fit(x_pca, y_train)
 
 # prediction
-sample = X_val[0]
-label, conf = predict_with_unknown(svm,le, sample)
-class_id = CLASS_TO_ID[label]
+y_pred = svm.predict(x_val_after_pca)
+accuracy = accuracy_score(y_val, y_pred)
+print("Accuracy: ", accuracy)
 
-print("Predicted:", label)
-print("Class ID:", class_id)
-print("Confidence:", conf)
+# save encoded labels
+joblib.dump(le, "../models/label_encoder.pkl")
+# save svm model
+joblib.dump(svm, "../models/svm_model.pkl")
+# save svm scalar
+joblib.dump(scaler, "../models/svm_scaler.pkl")
+# save svm pca
+joblib.dump(pca, "../models/svm_pca.pkl")
+
+print("svm model saved")
