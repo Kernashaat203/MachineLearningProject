@@ -2,24 +2,21 @@ import cv2
 import time
 import numpy as np
 import torch
-import pickle
 import joblib
 import os
 from Preprocessing.FeatureExtraction import CNNFeatureExtractor
+from test import predict
 
 CONF_THRESHOLD_SVM = 0.60
 CONF_THRESHOLD_KNN = 0.65
 
-SVM_MODEL_PATH = "models/svm_model.pkl"
-SVM_LABEL_ENCODER_PATH = "models/label_encoder.pkl"
-SVM_SCALER_PATH = "models/svm_scaler.pkl"
-SVM_PCA_PATH = "models/svm_pca.pkl"
+SVM_MODEL_PATH = "models/SVM/svm_model.pkl"
+SVM_LABEL_ENCODER_PATH = "models/SVM/label_encoder.pkl"
 
-
-KNN_MODEL_PATH = "models/knn_model.pkl"
-KNN_SCALER_PATH = "models/knn_scaler.pkl"
-KNN_LABEL_ENCODER_PATH = "models/knn_label_encoder.pkl"
-KNN_THRESHOLD_PATH = "models/knn_threshold.pkl"
+KNN_MODEL_PATH = "models/KNN/knn_model.pkl"
+KNN_SCALER_PATH = "models/KNN/knn_scaler.pkl"
+KNN_LABEL_ENCODER_PATH = "models/KNN/knn_label_encoder.pkl"
+KNN_THRESHOLD_PATH = "models/KNN/knn_threshold.pkl"
 
 CLASS_NAMES = ["glass", "paper", "cardboard", "plastic", "metal", "trash"]
 UNKNOWN_LABEL = "unknown"
@@ -31,14 +28,11 @@ print("Loading models....")
 
 svm_model = joblib.load(SVM_MODEL_PATH)
 svm_label_encoder = joblib.load(SVM_LABEL_ENCODER_PATH)
-svm_scaler = joblib.load(SVM_SCALER_PATH)
-svm_pca = joblib.load(SVM_PCA_PATH)
 
-
-knn_model = pickle.load(open(KNN_MODEL_PATH, "rb"))
-knn_scaler = pickle.load(open(KNN_SCALER_PATH, "rb"))
-knn_label_encoder = pickle.load(open(KNN_LABEL_ENCODER_PATH, "rb"))
-knn_thresholds = pickle.load(open(KNN_THRESHOLD_PATH, "rb"))
+knn_model = joblib.load(KNN_MODEL_PATH)
+knn_scaler = joblib.load(KNN_SCALER_PATH)
+knn_label_encoder = joblib.load(KNN_LABEL_ENCODER_PATH)
+knn_thresholds = joblib.load(KNN_THRESHOLD_PATH)
 CONF_THRESHOLD_KNN = knn_thresholds["confidence_threshold"]
 
 MODEL_TYPE = 'svm'
@@ -47,13 +41,9 @@ print(f"Using model: {MODEL_TYPE.upper()}")
 extractor = CNNFeatureExtractor()
 
 
-def predict(features):
+def Predict(features):
     if MODEL_TYPE == "svm":
-        X = features.reshape(1, -1)
-        X = svm_scaler.transform(X)
-        X = svm_pca.transform(X)
-
-        probs = svm_model.predict_proba(X)[0]
+        probs = svm_model.predict_proba(features.reshape(1, -1))[0]
         indx = np.argmax(probs)
         confidance = probs[indx]
 
@@ -72,7 +62,6 @@ def predict(features):
         label = knn_label_encoder.inverse_transform([indx])[0]
         return label, confidance
 
-
 def predict_folder(folder_path):
     if not os.path.isdir(folder_path):
         print("ERROR: Folder not found")
@@ -87,15 +76,10 @@ def predict_folder(folder_path):
             features = extractor.extract_from_path(img_path)
             if features is None:
                 continue
-            label, confidence = predict(features)
+            label, confidence = Predict(features)
             print(f"{file_name:25s} -> {label.upper():10s} | Confidence: {confidence:.2f}")
         except Exception as e:
             print(f"Error loading {img_path}: {e}")
-
-def predict_image(img):
-    img = cv2.resize(img, (224, 224))
-    features = extractor.extract_from_opencv(img)
-    return predict(features)
 
 
 def run_camera():
@@ -122,7 +106,7 @@ def run_camera():
         start_time = time.time()
 
         features = extractor.extract_from_opencv(region_crop)
-        label, confidence = predict(features)
+        label, confidence = Predict(features)
 
         fps = 1.0 / (time.time() - start_time)
         text = f"{label.upper()} | Confidence: {confidence:.2f} | FPS: {fps:.1f}"
@@ -138,7 +122,7 @@ def run_camera():
 
 if __name__ == "__main__":
     print("\nChoose mode:")
-    print("1- Real-time camera prediction")
+    print("1 - Real-time camera prediction")
     print("2- Predict images from folder")
     MODE = input("Enter choice (1 or 2): ").strip()
 
@@ -150,4 +134,5 @@ if __name__ == "__main__":
         predict_folder(folder)
 
     else:
-        print("Invalid choice. Exiting.")
+        label = predict("test_img", "models/SVM/svm_model.pkl")
+        print(label)
