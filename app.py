@@ -89,10 +89,8 @@ def predict_image(img):
 
 
 def run_camera():
-    Region = 200
-    Margin = 70
     #Camera loop
-    cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+    cap = cv2.VideoCapture(0)
     if not cap.isOpened():
         print("ERROR: Camera not accessible")
         exit()
@@ -105,21 +103,15 @@ def run_camera():
             break
 
         h, w, _ = frame.shape
+        x1, y1 = w // 4, h // 4
+        x2, y2 = 3 * w // 4, 3 * h // 4
 
-        y1 = Margin
-        x2 = w - Margin
-        x1 = x2 - Region
-        y2 = y1 + Region
-
-        # clamp
-        x1, y1 = max(0, x1), max(0, y1)
-        x2, y2 = min(w, x2), min(h, y2)
         cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 255, 0), 2)
 
         region_crop = frame[y1:y2, x1:x2]
         start_time = time.time()
 
-        features = extractor.extract_from_opencv(frame)
+        features = extractor.extract_from_opencv(region_crop)
         label, confidence = predict(features)
 
         fps = 1.0 / (time.time() - start_time)
