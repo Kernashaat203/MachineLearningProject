@@ -54,7 +54,7 @@ accuracy = accuracy_score(y_val, y_pred)
 print("Accuracy: ", accuracy)
 
 # save encoded labels
-joblib.dump(le, "../models/SVM/label_encoder.pkl")
+joblib.dump(le, "../models/SVM/svm_label_encoder.pkl")
 # save svm model
 joblib.dump(svm, "../models/SVM/svm_model.pkl")
 # save svm scalar
