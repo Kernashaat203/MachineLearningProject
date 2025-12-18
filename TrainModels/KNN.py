@@ -5,15 +5,13 @@ from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
-import matplotlib.pyplot as plt
-import seaborn as sns
-import cv2
+
 FEATURES_FILE = "../data/cnn_features.npy"
 LABELS_FILE = "../data/cnn_labels.npy"
-MODEL_SAVE_PATH = "../models/knn_model.pkl"
-SCALER_SAVE_PATH = "../models/knn_scaler.pkl"
-LABEL_ENCODER_PATH = "../models/knn_label_encoder.pkl"
-THRESHOLD_PATH = "../models/knn_threshold.pkl"
+MODEL_SAVE_PATH = "../models/KNN/knn_model.pkl"
+SCALER_SAVE_PATH = "../models/KNN/knn_scaler.pkl"
+LABEL_ENCODER_PATH = "../models/KNN/knn_label_encoder.pkl"
+THRESHOLD_PATH = "../models/KNN/knn_threshold.pkl"
 
 CONFIDENCE_THRESHOLD = 0.55
 
@@ -93,6 +91,7 @@ best_threshold = CONFIDENCE_THRESHOLD
 best_accuracy = 0
 
 
+
 for thresh in thresholds_to_test:
     adjusted_predictions = val_predictions.copy()
     unknown_mask = val_confidences < thresh
@@ -105,7 +104,7 @@ for thresh in thresholds_to_test:
             best_threshold = thresh
 
 
-def predict_with_unknown(knn_model, X_scaled, scaler, confidence_threshold, distance_threshold):
+def predict_with_unknown(knn_model, X_scaled, confidence_threshold):
 
     base_predictions = knn_model.predict(X_scaled)
     confidences = calculate_prediction_confidence(knn_model, X_scaled)
@@ -119,9 +118,8 @@ def predict_with_unknown(knn_model, X_scaled, scaler, confidence_threshold, dist
 
     return final_predictions, confidences, rejection_reasons
 
-y_val_pred_with_unknown, val_confidences, rejection_reasons = predict_with_unknown(
-    best_knn, X_val_scaled, scaler, best_threshold, distance_threshold
-)
+
+y_val_pred_with_unknown, val_confidences, rejection_reasons = predict_with_unknown(best_knn, X_val_scaled, best_threshold)
 
 known_mask = y_val_pred_with_unknown != 6
 unknown_count = np.sum(~known_mask)
