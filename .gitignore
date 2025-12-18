@@ -1,0 +1,39 @@
+# === Python ===
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# === Virtual Environments ===
+venv/
+env/
+.venv/
+
+# === PyCharm / IDE ===
+.idea/
+*.iml
+
+# === OS files ===
+.DS_Store
+Thumbs.db
+
+# === Logs ===
+*.log
+
+# === Build / Distribution ===
+build/
+dist/
+*.egg-info/
+
+# === Testing ===
+.pytest_cache/
+.coverage
+htmlcov/
+
+# === Environment variables ===
+.env
+
+# === Jupyter ===
+.ipynb_checkpoints/
+
+data/dataset
