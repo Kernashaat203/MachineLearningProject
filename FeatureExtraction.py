@@ -165,7 +165,5 @@ def load_or_build_cnn_dataset(model_name='resnet18'):  #load existing CNN featur
 
 if __name__ == "__main__":
 
-    #extract features using ResNet18 (fastest and works well)
-    #for better accuracy but slower: use 'resnet50'
     print("\nStarting feature extraction...")
     X, y = load_or_build_cnn_dataset(model_name='resnet18')

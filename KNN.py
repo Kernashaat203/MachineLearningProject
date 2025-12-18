@@ -5,9 +5,6 @@ from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
-import matplotlib.pyplot as plt
-import seaborn as sns
-import cv2
 
 FEATURES_FILE = "data/cnn_features.npy"
 LABELS_FILE = "data/cnn_labels.npy"
