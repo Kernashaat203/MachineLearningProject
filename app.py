@@ -5,7 +5,7 @@ import torch
 import pickle
 import joblib
 import os
-from FeatureExtraction import CNNFeatureExtractor
+from Preprocessing.FeatureExtraction import CNNFeatureExtractor
 
 print("\nChoose mode:")
 print("1 - Real-time camera prediction")
