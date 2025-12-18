@@ -134,5 +134,8 @@ if __name__ == "__main__":
         predict_folder(folder)
 
     else:
+        label = predict("test_img", "models/KNN/knn_model.pkl")
+        print(label)
+
         label = predict("test_img", "models/SVM/svm_model.pkl")
         print(label)
